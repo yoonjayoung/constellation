@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>333</title>
+  <style>
+      @font-face {
+      font-family: 'TinyFont';
+      src: url('../fonts/TINY5x3GX.ttf') format('truetype');
+      font-weight: 20;
+      font-style: normal;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: url('../qorud.png') no-repeat center center;
+      background-size: cover;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #mainImage {
+      cursor: pointer;
+      width: 200px; /* 원하면 크기 조정 */
+      z-index: 100; /* 추가: 항상 floating-text 위에! */
+      position: relative; /* z-index를 적용하려면 필요 */
+    }
+    #inputContainer {
+    width: 900px;
+    height: 50px;
+    background-color: #11121E;
+    margin-top: 20px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+    z-index: 100; /* 추가: 항상 floating-text 위에! */
+    position: relative; /* z-index를 적용하려면 필요 */
+  }
+
+    #inputContainer select,
+    #inputContainer input,
+    #inputContainer span,
+    #inputContainer button {
+      height: 30px;
+      font-size: 14px;
+    }
+
+    #textInput {
+      width: 150px;
+    }
+
+    .middle-text {
+      color: white;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .floating-text {
+    position: absolute;
+    font-family: 'TinyFont', sans-serif;
+    font-variation-settings: "wght" 20;
+    color: #FFFDC7;
+    opacity: 1;
+    text-shadow: 0 0 5px #FFFDC7, 0 0 10px #FFFDC7, 0 0 20px #FFFDC7, 0 0 40px #FFFDC7;
+    pointer-events: auto;
+    white-space: nowrap;
+    z-index: 1; /* 추가: floating-text는 더 아래에 있게 */
+  }
+
+    /* 도트 크기(wght 축) 애니메이션 정의 */
+    @keyframes wghtPulse {
+      0%   { font-variation-settings: "wght" 60; }
+      25%  { font-variation-settings: "wght" 100; }
+      50%  { font-variation-settings: "wght" 70; }
+      75%  { font-variation-settings: "wght" 140; }
+      100% { font-variation-settings: "wght" 60; }
+    }
+
+    /* 마우스 올리면 애니메이션 실행 */
+    .floating-text:hover {
+      animation: wghtPulse 6s infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 중앙에 처음 뜨는 이미지 -->
+  <img id="mainImage" src="../무제-2.png" alt="버튼 이미지">
+
+  <!-- 나중에 클릭하면 뜰 입력 컨테이너 -->
+  <div id="inputContainer">
+    <select name="god" id="god">
+      <option value="Zeus">Zeus</option>
+      <option value="Hera">Hera</option>
+      <option value="Athena">Athena</option>
+      <option value="Aphrodite">Aphrodite</option>
+      <option value="Dionysus">Dionysus</option>
+      <option value="Hermes">Hermes</option>
+    </select>
+    <span class="middle-text">please make the</span>
+    <select name="caracter" id="cara">
+      <option value="mean">mean</option>
+      <option value="bad">bad</option>
+      <option value="lying">lying</option>
+    </select>
+    <input type="text" id="textInput" placeholder="텍스트를 입력하세요" />
+    <span class="middle-text">a constellation.</span>
+    <button type="button" onclick="showText()">확인</button>
+  </div>
+
+  <script>
+    const mainImage = document.getElementById('mainImage');
+    const inputContainer = document.getElementById('inputContainer');
+  
+    mainImage.addEventListener('click', function() {
+      // 클릭할 때마다 보여주기/숨기기 토글
+      if (inputContainer.style.display === 'none' || inputContainer.style.display === '') {
+        inputContainer.style.display = 'flex';
+      } else {
+        inputContainer.style.display = 'none';
+      }
+    });
+  
+    function showText() {
+      const input = document.getElementById('textInput').value.trim();
+      const selectedGod = document.getElementById('god').value;
+      const selectedCaracter = document.getElementById('cara').value;
+  
+      if (!input) {
+        alert("텍스트를 입력하세요!");
+        return;
+      }
+  
+      const newText = document.createElement('div');
+      newText.className = 'floating-text';
+      newText.innerText = input;
+  
+      const randomFontSize = Math.floor(Math.random() * (435 - 165 + 1)) + 165;
+      newText.style.fontSize = randomFontSize + 'pt';
+  
+      const colorMap = {
+        'Zeus': '#FFFDC7',
+        'Hera': '#FFB883',
+        'Athena': '#92B9FF',
+        'Aphrodite': '#FFBBF9',
+        'Dionysus': '#D99DFC',
+        'Hermes': '#BEFFB0'
+      };
+      const selectedColor = colorMap[selectedGod] || '#FFFDC7';
+  
+      newText.style.color = selectedColor;
+      newText.style.textShadow = `
+        0 0 5px ${selectedColor},
+        0 0 10px ${selectedColor},
+        0 0 20px ${selectedColor},
+        0 0 40px ${selectedColor}
+      `;
+  
+      document.body.appendChild(newText);
+  
+      const textWidth = newText.offsetWidth;
+      const textHeight = newText.offsetHeight;
+  
+      const maxX = window.innerWidth - textWidth;
+      const maxY = window.innerHeight - textHeight;
+  
+      const randomX = Math.floor(Math.random() * (maxX + 1));
+      const randomY = Math.floor(Math.random() * (maxY + 1));
+  
+      newText.style.position = 'absolute';
+      newText.style.left = randomX + 'px';
+      newText.style.top = randomY + 'px';
+      newText.style.transition = 'opacity 300s linear';
+  
+      requestAnimationFrame(() => {
+        newText.style.opacity = '0';
+      });
+  
+      setTimeout(() => {
+        newText.remove();
+      }, 300000);
+      newText.addEventListener('click', (e) => {
+      e.stopPropagation(); // 다른 클릭 이벤트 방지
+
+      const box = document.createElement('div');
+      box.style.position = 'absolute';
+      box.style.left = e.pageX + 'px';
+      box.style.top = e.pageY + 'px';
+      box.style.width = '50px';
+      box.style.height = '25px';
+      box.style.backgroundColor = 'white';
+      box.style.border = '1px solid black';
+      box.style.display = 'flex';
+      box.style.alignItems = 'center';
+      box.style.justifyContent = 'center';
+      box.style.fontSize = '12px';
+      box.style.fontWeight = 'bold';
+      box.innerText = selectedCaracter; // 선택한 캐릭터 텍스트 표시
+
+      document.body.appendChild(box);
+
+      // 선택 박스도 10초 후 자동 삭제 (원하면 시간 조정 가능)
+      setTimeout(() => {
+        box.remove();
+      }, 2000);
+    });
+  }
+  </script>
+  
+
+</body>
+</html>
